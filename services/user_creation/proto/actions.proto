@@ -1,0 +1,24 @@
+syntax="proto3";
+
+package blend.services.user_creation.proto;
+
+option go_package="blendwith.me/services/user_creation/models";
+
+enum StatusCode {
+    STATUS_OK = 0;
+    STATUS_CODE_INTERNAL_ERROR = 1;
+    STATUS_CODE_INVALID_NUMBER = 2;
+    STATUS_CODE_NUMBER_ALREADY_TAKEN = 3;
+    STATUS_CODE_UID_ALREADY_TAKEN = 4;
+    STATUS_CODE_INVALID_UID = 5;
+}
+
+message Action1Response {
+    bool ok = 1;
+    StatusCode code = 2;
+}
+
+message Action2Response {
+    bool ok = 1;
+    StatusCode code = 2;
+}

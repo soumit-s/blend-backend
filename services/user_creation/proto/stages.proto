@@ -1,0 +1,35 @@
+syntax="proto3";
+package blend.services.user_creation.proto;
+
+option go_package="blendwith.me/services/user_creation/models";
+
+enum StageType {
+    STAGE_1 = 0;
+    STAGE_2 = 1;
+    STAGE_3 = 2;
+}
+
+message Stage {
+    StageType stage = 1;
+    oneof data {
+        Stage1 stage_1 = 2;
+        Stage2 stage_2 = 3;
+        Stage3 stage_3 = 4;
+    }
+}
+
+message Stage1 {
+    string number = 1;
+    string secret = 2;
+}
+
+message Stage2 {
+    string number = 1;
+    string uid = 2;
+}
+
+message Stage3 {
+    string number = 1;
+    string uid = 2;
+    string email = 3;
+}
