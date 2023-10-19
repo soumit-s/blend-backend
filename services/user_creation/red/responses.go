@@ -9,10 +9,14 @@ import (
 )
 
 var (
-	Action1_ResponseOK                 []byte
 	Action1_ResponseInvalidNumber      []byte
 	Action1_ResponseNumberAlreadyTaken []byte
 	ResponseInternalError              []byte
+	ResponseTxnNotFound                []byte
+	ResponseInvalidAction              []byte
+	ResponseInvalidOTP                 []byte
+	ResponseOK                         []byte
+	ResponseOtpMissing                 []byte
 )
 
 func marshalProto(m protoreflect.ProtoMessage) []byte {
@@ -31,8 +35,34 @@ func init() {
 		}
 	}()
 
-	ResponseInternalError = marshalProto(&pb.Action1Response{Ok: false, Code: pb.StatusCode_STATUS_CODE_INTERNAL_ERROR})
-	Action1_ResponseOK = marshalProto(&pb.Action1Response{Ok: true, Code: pb.StatusCode_STATUS_OK})
-	Action1_ResponseInvalidNumber = marshalProto(&pb.Action1Response{Ok: false, Code: pb.StatusCode_STATUS_CODE_INVALID_NUMBER})
-	Action1_ResponseNumberAlreadyTaken = marshalProto(&pb.Action1Response{Ok: false, Code: pb.StatusCode_STATUS_CODE_NUMBER_ALREADY_TAKEN})
+	ResponseOK = NewResponse(true, pb.StatusCode_STATUS_CODE_OK)
+
+	ResponseOtpMissing = NewErrResponse(pb.StatusCode_STATUS_CODE_OTP_MISSING)
+	ResponseInternalError = marshalProto(&pb.Response{Ok: false, Code: pb.StatusCode_STATUS_CODE_INTERNAL_ERROR})
+	Action1_ResponseInvalidNumber = marshalProto(&pb.Response{Ok: false, Code: pb.StatusCode_STATUS_CODE_INVALID_NUMBER})
+	Action1_ResponseNumberAlreadyTaken = marshalProto(&pb.Response{Ok: false, Code: pb.StatusCode_STATUS_CODE_NUMBER_ALREADY_TAKEN})
+	ResponseTxnNotFound = marshalProto(&pb.Response{Ok: false, Code: pb.StatusCode_STATUS_CODE_TXN_NOT_FOUND})
+	ResponseInvalidAction = NewErrResponse(pb.StatusCode_STATUS_CODE_INVALID_ACTION)
+	ResponseInvalidOTP = NewErrResponse(pb.StatusCode_STATUS_CODE_INVALID_OTP)
+}
+
+func NewResponse(ok bool, code pb.StatusCode) []byte {
+	return marshalProto(&pb.Response{Ok: ok, Code: code})
+}
+
+func NewErrResponse(code pb.StatusCode) []byte {
+	return NewResponse(false, code)
+}
+
+func NewAction1ResponseOK(txnId string, otp string) []byte {
+	return marshalProto(&pb.Response{
+		Ok:   true,
+		Code: pb.StatusCode_STATUS_CODE_OK,
+		Data: &pb.Response_Action_1{
+			Action_1: &pb.Action1Response{
+				TxnId: txnId,
+				Otp:   otp,
+			},
+		},
+	})
 }

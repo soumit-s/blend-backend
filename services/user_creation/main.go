@@ -15,7 +15,7 @@ func main() {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	s := service.Instance{}
+	s := service.NewInstance()
 
 	s.SetShutdownHook(func(*service.Instance) { wg.Done() })
 

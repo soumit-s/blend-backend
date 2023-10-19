@@ -8,9 +8,19 @@ import (
 )
 
 type Instance struct {
-	NatsConn *nats.Conn
-
+	NatsConn       *nats.Conn
+	Workers        []workers.Worker
 	onShutdownHook func(*Instance)
+}
+
+func NewInstance() *Instance {
+	return &Instance{
+		Workers: []workers.Worker{
+			workers.NewPingWorker(),
+			&workers.Action1Worker{},
+			&workers.Action2Worker{},
+		},
+	}
 }
 
 func (i *Instance) Start() error {
@@ -21,21 +31,23 @@ func (i *Instance) Start() error {
 	log.Print("successfully connected to NATS server")
 
 	// Start the workers.
-	log.Print("starting ping worker")
-	workers.StartPingWorker(i.NatsConn)
-	log.Print("successfully started ping worker")
-
-	// Start action.1 worker
-	log.Print("starting action.1 worker")
-	_, err := workers.StartAction1Worker(i.NatsConn)
-	if err != nil {
-		log.Print("failed to start action.1 worker !")
+	if err := i.startWorkers(); err != nil {
 		return err
 	}
-	log.Print("successfully started action.1 worker")
 
-	log.Print("successfully started all workers")
+	return nil
+}
 
+func (i *Instance) startWorkers() error {
+	log.Print("starting workers ...")
+	for _, w := range i.Workers {
+		log.Printf("starting worker '%v' ...", w.Name())
+		if err := w.Start(i.NatsConn); err != nil {
+			log.Printf("failed to start worker '%v' ...", w.Name())
+			return err
+		}
+	}
+	log.Print("successfully started all workers ...")
 	return nil
 }
 

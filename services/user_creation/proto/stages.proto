@@ -7,14 +7,15 @@ enum StageType {
     STAGE_1 = 0;
     STAGE_2 = 1;
     STAGE_3 = 2;
+    STAGE_4 = 3;
 }
 
 message Stage {
     StageType stage = 1;
     oneof data {
         Stage1 stage_1 = 2;
-        Stage2 stage_2 = 3;
-        Stage3 stage_3 = 4;
+        Stage3 stage_2 = 3;
+        Stage4 stage_3 = 4;
     }
 }
 
@@ -23,12 +24,12 @@ message Stage1 {
     string secret = 2;
 }
 
-message Stage2 {
+message Stage3 {
     string number = 1;
     string uid = 2;
 }
 
-message Stage3 {
+message Stage4 {
     string number = 1;
     string uid = 2;
     string email = 3;

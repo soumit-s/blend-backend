@@ -1,6 +1,9 @@
 package red
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type ErrNumberAlreadyTaken struct {
 	Number string
@@ -29,3 +32,18 @@ func (e ErrInternal) Unwrap() error {
 func (e ErrInternal) Error() string {
 	return fmt.Sprintf("internal error: %v", e.Err)
 }
+
+type ErrTxnNotFound struct {
+	TxnID string
+}
+
+func NewErrTxnNotFound(id string) ErrTxnNotFound {
+	return ErrTxnNotFound{TxnID: id}
+}
+
+func (e ErrTxnNotFound) Error() string {
+	return fmt.Sprintf("failed to find transaction with id: %v", e.TxnID)
+}
+
+var ErrInvalidAction = errors.New("invalid action on current transaction stage")
+var ErrOtpMissing = errors.New("otp is missing from the subject name")
