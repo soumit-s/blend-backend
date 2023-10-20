@@ -49,3 +49,13 @@ func FindUserByUID(uid string, user *models.User) error {
 
 	return nil
 }
+
+func CreateUser(u *models.User) error {
+	err := Blend.Table("users").Create(&u).Error
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		return ErrUserAlreadyExists
+	} else if err != nil {
+		return err
+	}
+	return nil
+}

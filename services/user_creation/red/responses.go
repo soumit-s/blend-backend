@@ -17,6 +17,8 @@ var (
 	ResponseInvalidOTP                 []byte
 	ResponseOK                         []byte
 	ResponseOtpMissing                 []byte
+	ResponseInvalidUID                 []byte
+	ResponseUIDAlreadyTaken            []byte
 )
 
 func marshalProto(m protoreflect.ProtoMessage) []byte {
@@ -44,6 +46,8 @@ func init() {
 	ResponseTxnNotFound = marshalProto(&pb.Response{Ok: false, Code: pb.StatusCode_STATUS_CODE_TXN_NOT_FOUND})
 	ResponseInvalidAction = NewErrResponse(pb.StatusCode_STATUS_CODE_INVALID_ACTION)
 	ResponseInvalidOTP = NewErrResponse(pb.StatusCode_STATUS_CODE_INVALID_OTP)
+	ResponseInvalidUID = NewErrResponse(pb.StatusCode_STATUS_CODE_INVALID_UID)
+	ResponseUIDAlreadyTaken = NewErrResponse(pb.StatusCode_STATUS_CODE_UID_ALREADY_TAKEN)
 }
 
 func NewResponse(ok bool, code pb.StatusCode) []byte {

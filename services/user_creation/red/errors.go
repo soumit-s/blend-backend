@@ -33,17 +33,9 @@ func (e ErrInternal) Error() string {
 	return fmt.Sprintf("internal error: %v", e.Err)
 }
 
-type ErrTxnNotFound struct {
-	TxnID string
-}
-
-func NewErrTxnNotFound(id string) ErrTxnNotFound {
-	return ErrTxnNotFound{TxnID: id}
-}
-
-func (e ErrTxnNotFound) Error() string {
-	return fmt.Sprintf("failed to find transaction with id: %v", e.TxnID)
-}
-
+var ErrTxnNotFound = errors.New("transcation with given ID not found")
 var ErrInvalidAction = errors.New("invalid action on current transaction stage")
 var ErrOtpMissing = errors.New("otp is missing from the subject name")
+var ErrInvalidUID = errors.New("invalid UID")
+var ErrInvalidEmail = errors.New("invalid email")
+var ErrUIDAlreadyTaken = errors.New("uid already taken")

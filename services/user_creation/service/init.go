@@ -19,6 +19,7 @@ func NewInstance() *Instance {
 			workers.NewPingWorker(),
 			&workers.Action1Worker{},
 			&workers.Action2Worker{},
+			&workers.Action3Worker{},
 		},
 	}
 }

@@ -11,4 +11,5 @@ const (
 	PingGrpName    = "service.user-creation.ping"
 	Action1GrpName = "service.user-creation.action.1"
 	Action2GrpName = "service.user-creation.action.2"
+	Action3GrpName = "service.user-creation.action.3"
 )

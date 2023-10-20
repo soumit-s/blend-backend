@@ -17,6 +17,11 @@ enum StatusCode {
     STATUS_CODE_OTP_MISSING = 9;
 }
 
+message Action3Request {
+    string uid = 1;
+    string email = 2;
+}
+
 message Response {
     bool ok = 1;
     StatusCode code = 2;    

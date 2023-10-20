@@ -29,15 +29,12 @@ func (w *Action2Worker) worker(msg *nats.Msg) {
 
 	valid, err := red.VerifyOTPAndPromote(txnID, otp)
 	if err != nil {
-		switch err.(type) {
-		case red.ErrTxnNotFound:
+		if errors.Is(err, red.ErrTxnNotFound) {
 			msg.Respond(red.ResponseTxnNotFound)
-		default:
-			if errors.Is(err, red.ErrInvalidAction) {
-				msg.Respond(red.ResponseInvalidAction)
-			} else {
-				msg.Respond(red.ResponseInternalError)
-			}
+		} else if errors.Is(err, red.ErrInvalidAction) {
+			msg.Respond(red.ResponseInvalidAction)
+		} else {
+			msg.Respond(red.ResponseInternalError)
 		}
 		return
 	}

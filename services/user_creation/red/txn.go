@@ -14,6 +14,11 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+type Transaction struct {
+	TxnID string
+	Data  pb.Stage
+}
+
 // GenerateTxnId generates a new Transaction Id.
 func GenerateTxnId(phn string) string {
 	for i := 0; true; i++ {
@@ -81,7 +86,7 @@ func GetTxnByID(txnId string, data *pb.Stage) error {
 
 	raw, err := rclient.Get(ctx, txnId).Result()
 	if errors.Is(err, redis.Nil) {
-		return NewErrTxnNotFound(txnId)
+		return ErrTxnNotFound
 	} else if err != nil {
 		return err
 	}
@@ -100,4 +105,27 @@ func PromoteTxnToStage2(txnID string, data *pb.Stage) error {
 
 	err := rclient.Set(ctx, txnID, raw, 0).Err()
 	return err
+}
+
+// EndTransaction ends a transaction.
+func EndTransaction(txnID string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	_, err := rclient.Del(ctx, txnID).Result()
+	return err
+}
+
+// VerifyEmailAndUID validates the UID and verifies the email
+func VerifyEmailAndUID(uid string, email string) error {
+	if err := ValidateUID(uid); err != nil {
+		return err
+	}
+
+	if ok, err := VerifyEmail(email); err != nil {
+		return err
+	} else if !ok {
+		return ErrInvalidEmail
+	}
+
+	return nil
 }

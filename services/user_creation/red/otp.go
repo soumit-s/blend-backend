@@ -1,6 +1,7 @@
 package red
 
 import (
+	"errors"
 	"time"
 
 	pb "blendwith.me/services/user_creation/models"
@@ -30,7 +31,7 @@ func VerifyOTPAndPromote(txnID string, otp string) (bool, error) {
 	// Get the transaction
 	data := pb.Stage{}
 	err := GetTxnByID(txnID, &data)
-	if _, ok := err.(*ErrTxnNotFound); ok {
+	if errors.Is(err, ErrTxnNotFound) {
 		return false, err
 	}
 
