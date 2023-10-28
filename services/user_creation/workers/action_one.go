@@ -1,6 +1,8 @@
 package workers
 
 import (
+	"log"
+
 	"blendwith.me/services/user_creation/red"
 	"github.com/nats-io/nats.go"
 )
@@ -12,6 +14,10 @@ func (w *Action1Worker) Name() string {
 	return "action.1"
 }
 
+func (w *Action1Worker) logf(format string, v ...any) {
+	log.Printf("[ action.1 ] "+format, v...)
+}
+
 // In Action 1, it is checked whether a transaction
 // exists with the given number or not. If it does
 // not exist then, the transaction is started and
@@ -20,6 +26,7 @@ func (w *Action1Worker) Name() string {
 // is the E.164 standard adhering phone number.
 func (w *Action1Worker) worker(msg *nats.Msg) {
 	phn := msg.Subject[len(Action1SubjectName)+1:]
+	w.logf("request recieved at subject %v for phone number %v", msg.Subject, phn)
 	// Check if the phone number is valid or not.
 	valid, err := red.CheckIfPhoneNumberIsValid(phn)
 	if err != nil {
