@@ -1,0 +1,31 @@
+syntax="proto3";
+package blend.services.user_mgmt.proto;
+
+option go_package="blendwith.me/services/user_mgmt/pb";
+
+
+enum ResponseCode {
+    OK = 0;
+    INVALID_QUERY = 1;
+    INVALID_FIELD_NAME = 2;
+    INTERNAL_ERROR = 3;
+    INVALID_SCHEMA = 4;
+    USER_ALREADY_EXISTS = 5;
+}
+
+message Response {
+    bool ok =1;
+    ResponseCode code = 2;
+    oneof data {
+        FetchIdResponse fetch_id = 3;
+        CreateUserResponse create_user = 4;
+    };
+}
+
+message FetchIdResponse {
+    uint64 id = 1;    
+}
+
+message CreateUserResponse {
+    uint64 id = 1;
+}
