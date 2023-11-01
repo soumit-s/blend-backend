@@ -39,3 +39,34 @@ var ErrOtpMissing = errors.New("otp is missing from the subject name")
 var ErrInvalidUID = errors.New("invalid UID")
 var ErrInvalidEmail = errors.New("invalid email")
 var ErrUIDAlreadyTaken = errors.New("uid already taken")
+var ErrUserAlreadyExists = errors.New("user already exists")
+
+type userAlreadyExistsError struct {
+	Uid   bool
+	Phone bool
+	Email bool
+}
+
+func (*userAlreadyExistsError) Unwrap() error {
+	return ErrUserAlreadyExists
+}
+
+func (userAlreadyExistsError) Error() string {
+	return ErrUserAlreadyExists.Error()
+}
+
+func NewErrUserAlreadyExists(forUid bool, forPhone bool, forEmail bool) *userAlreadyExistsError {
+	return &userAlreadyExistsError{
+		Uid:   forUid,
+		Phone: forPhone,
+		Email: forEmail,
+	}
+}
+
+func AsUserAlreadyExistsError(err error) (*userAlreadyExistsError, bool) {
+	e := &userAlreadyExistsError{}
+	if ok := errors.As(err, e); !ok {
+		return nil, false
+	}
+	return e, true
+}

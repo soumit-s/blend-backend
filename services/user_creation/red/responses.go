@@ -70,3 +70,26 @@ func NewAction1ResponseOK(txnId string, otp string) []byte {
 		},
 	})
 }
+
+func NewResponseUserAlreadyExists(uid bool, phone bool, email bool) *pb.Response {
+	return &pb.Response{
+		Ok:   false,
+		Code: pb.StatusCode_STATUS_CODE_USER_ALREADY_EXISTS,
+		Errors: []*pb.Error{
+			{
+				Value: &pb.Error_UserAlreayExists{
+					UserAlreayExists: &pb.UserAlreadyExistsError{
+						Uid:   uid,
+						Phone: phone,
+						Email: email,
+					},
+				},
+			},
+		},
+	}
+}
+
+func ResponseUserAlreadyExists(uid bool, phone bool, email bool) []byte {
+	raw, _ := proto.Marshal(NewResponseUserAlreadyExists(uid, phone, email))
+	return raw
+}

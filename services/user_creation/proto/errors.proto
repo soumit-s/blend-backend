@@ -1,0 +1,16 @@
+syntax="proto3";
+package blend.services.user_creation.proto;
+
+option go_package="blendwith.me/services/user_creation/models";
+
+message UserAlreadyExistsError {
+    bool uid = 1;
+    bool phone = 2;
+    bool email = 3;
+}
+
+message Error {
+    oneof value {
+        UserAlreadyExistsError userAlreayExists = 1;
+    }
+}

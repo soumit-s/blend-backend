@@ -4,6 +4,8 @@ package blend.services.user_creation.proto;
 
 option go_package="blendwith.me/services/user_creation/models";
 
+import "services/user_creation/proto/errors.proto";
+
 enum StatusCode {
     STATUS_CODE_OK = 0;
     STATUS_CODE_INTERNAL_ERROR = 1;
@@ -15,6 +17,7 @@ enum StatusCode {
     STATUS_CODE_TXN_NOT_FOUND = 7;
     STATUS_CODE_INVALID_OTP = 8;
     STATUS_CODE_OTP_MISSING = 9;
+    STATUS_CODE_USER_ALREADY_EXISTS = 10;
 }
 
 message Action3Request {
@@ -28,6 +31,7 @@ message Response {
     oneof data {
         Action1Response action_1 = 3;
     }
+    repeated Error errors = 4;
 }
 
 message Action1Response {

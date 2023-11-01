@@ -3,22 +3,25 @@ package workers
 import (
 	"errors"
 	"log"
+	"time"
 
-	"blendwith.me/common/pdb"
-	"blendwith.me/common/pdb/models"
 	pb "blendwith.me/services/user_creation/models"
 	"blendwith.me/services/user_creation/red"
+	mgpb "blendwith.me/services/user_mgmt/pb"
 	"github.com/nats-io/nats.go"
 	"google.golang.org/protobuf/proto"
 )
 
-type Action3Worker struct{}
+type Action3Worker struct {
+	nc *nats.Conn
+}
 
 func (w *Action3Worker) Name() string {
 	return "action.3"
 }
 
 func (w *Action3Worker) Start(nc *nats.Conn) error {
+	w.nc = nc
 	_, err := nc.QueueSubscribe(Action3SubjectName+".*", Action3GrpName, w.worker)
 	return err
 }
@@ -87,19 +90,45 @@ func (w *Action3Worker) errorHandler(msg *nats.Msg) {
 		msg.Respond(red.ResponseUIDAlreadyTaken)
 	} else if errors.Is(err, red.ErrTxnNotFound) {
 		msg.Respond(red.ResponseTxnNotFound)
+	} else if errors.Is(err, red.ErrUserAlreadyExists) {
+		e, _ := red.AsUserAlreadyExistsError(err)
+		msg.Respond(red.ResponseUserAlreadyExists(e.Uid, e.Phone, e.Email))
 	} else {
 		msg.Respond(red.ResponseInternalError)
 	}
 }
 
 func (w *Action3Worker) createUser(uid string, phn string, email string) error {
-	u := models.User{
-		UID:         uid,
-		PhoneNumber: phn,
-		Email:       email,
+	u := mgpb.CreateUserRequest{
+		Uid:   uid,
+		Phone: phn,
+		Email: email,
+	}
+	req, _ := proto.Marshal(&u)
+	reply, err := w.nc.Request("service.user-mgmt.create.user", req, 5*time.Second)
+	if err != nil {
+		return err
 	}
 
-	return pdb.CreateUser(&u)
+	res := mgpb.Response{}
+	err = proto.Unmarshal(reply.Data, &res)
+	if err != nil {
+		return err
+	}
+
+	if res.Ok {
+		return nil
+	}
+
+	switch res.Code {
+	default:
+		fallthrough
+	case mgpb.ResponseCode_INTERNAL_ERROR:
+		return red.NewErrInternal(errors.New("user-mgmt service encountered an internal error"))
+	case mgpb.ResponseCode_USER_ALREADY_EXISTS:
+		err := res.Errors[0].GetUserAlreadyExistsError()
+		return red.NewErrUserAlreadyExists(err.UIDAlreadyTaken, err.PhoneNumberAlreadyTaken, err.EmailAlreadyTaken)
+	}
 }
 
 func (w *Action3Worker) getTxnID(subj string) string {
