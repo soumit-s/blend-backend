@@ -23,7 +23,8 @@ export namespace blend {
                     STATUS_CODE_INVALID_ACTION = 6,
                     STATUS_CODE_TXN_NOT_FOUND = 7,
                     STATUS_CODE_INVALID_OTP = 8,
-                    STATUS_CODE_OTP_MISSING = 9
+                    STATUS_CODE_OTP_MISSING = 9,
+                    STATUS_CODE_USER_ALREADY_EXISTS = 10
                 }
 
                 /** Properties of an Action3Request. */
@@ -140,6 +141,9 @@ export namespace blend {
 
                     /** Response action_1 */
                     action_1?: (blend.services.user_creation.proto.IAction1Response|null);
+
+                    /** Response errors */
+                    errors?: (blend.services.user_creation.proto.IError[]|null);
                 }
 
                 /** Represents a Response. */
@@ -159,6 +163,9 @@ export namespace blend {
 
                     /** Response action_1. */
                     public action_1?: (blend.services.user_creation.proto.IAction1Response|null);
+
+                    /** Response errors. */
+                    public errors: blend.services.user_creation.proto.IError[];
 
                     /** Response data. */
                     public data?: "action_1";
@@ -338,6 +345,215 @@ export namespace blend {
 
                     /**
                      * Gets the default type url for Action1Response
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                /** Properties of a UserAlreadyExistsError. */
+                interface IUserAlreadyExistsError {
+
+                    /** UserAlreadyExistsError uid */
+                    uid?: (boolean|null);
+
+                    /** UserAlreadyExistsError phone */
+                    phone?: (boolean|null);
+
+                    /** UserAlreadyExistsError email */
+                    email?: (boolean|null);
+                }
+
+                /** Represents a UserAlreadyExistsError. */
+                class UserAlreadyExistsError implements IUserAlreadyExistsError {
+
+                    /**
+                     * Constructs a new UserAlreadyExistsError.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: blend.services.user_creation.proto.IUserAlreadyExistsError);
+
+                    /** UserAlreadyExistsError uid. */
+                    public uid: boolean;
+
+                    /** UserAlreadyExistsError phone. */
+                    public phone: boolean;
+
+                    /** UserAlreadyExistsError email. */
+                    public email: boolean;
+
+                    /**
+                     * Creates a new UserAlreadyExistsError instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns UserAlreadyExistsError instance
+                     */
+                    public static create(properties?: blend.services.user_creation.proto.IUserAlreadyExistsError): blend.services.user_creation.proto.UserAlreadyExistsError;
+
+                    /**
+                     * Encodes the specified UserAlreadyExistsError message. Does not implicitly {@link blend.services.user_creation.proto.UserAlreadyExistsError.verify|verify} messages.
+                     * @param message UserAlreadyExistsError message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: blend.services.user_creation.proto.IUserAlreadyExistsError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified UserAlreadyExistsError message, length delimited. Does not implicitly {@link blend.services.user_creation.proto.UserAlreadyExistsError.verify|verify} messages.
+                     * @param message UserAlreadyExistsError message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: blend.services.user_creation.proto.IUserAlreadyExistsError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a UserAlreadyExistsError message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns UserAlreadyExistsError
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): blend.services.user_creation.proto.UserAlreadyExistsError;
+
+                    /**
+                     * Decodes a UserAlreadyExistsError message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns UserAlreadyExistsError
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): blend.services.user_creation.proto.UserAlreadyExistsError;
+
+                    /**
+                     * Verifies a UserAlreadyExistsError message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a UserAlreadyExistsError message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns UserAlreadyExistsError
+                     */
+                    public static fromObject(object: { [k: string]: any }): blend.services.user_creation.proto.UserAlreadyExistsError;
+
+                    /**
+                     * Creates a plain object from a UserAlreadyExistsError message. Also converts values to other types if specified.
+                     * @param message UserAlreadyExistsError
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: blend.services.user_creation.proto.UserAlreadyExistsError, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this UserAlreadyExistsError to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for UserAlreadyExistsError
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
+                /** Properties of an Error. */
+                interface IError {
+
+                    /** Error userAlreayExists */
+                    userAlreayExists?: (blend.services.user_creation.proto.IUserAlreadyExistsError|null);
+                }
+
+                /** Represents an Error. */
+                class Error implements IError {
+
+                    /**
+                     * Constructs a new Error.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: blend.services.user_creation.proto.IError);
+
+                    /** Error userAlreayExists. */
+                    public userAlreayExists?: (blend.services.user_creation.proto.IUserAlreadyExistsError|null);
+
+                    /** Error value. */
+                    public value?: "userAlreayExists";
+
+                    /**
+                     * Creates a new Error instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns Error instance
+                     */
+                    public static create(properties?: blend.services.user_creation.proto.IError): blend.services.user_creation.proto.Error;
+
+                    /**
+                     * Encodes the specified Error message. Does not implicitly {@link blend.services.user_creation.proto.Error.verify|verify} messages.
+                     * @param message Error message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: blend.services.user_creation.proto.IError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified Error message, length delimited. Does not implicitly {@link blend.services.user_creation.proto.Error.verify|verify} messages.
+                     * @param message Error message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: blend.services.user_creation.proto.IError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an Error message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns Error
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): blend.services.user_creation.proto.Error;
+
+                    /**
+                     * Decodes an Error message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns Error
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): blend.services.user_creation.proto.Error;
+
+                    /**
+                     * Verifies an Error message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an Error message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns Error
+                     */
+                    public static fromObject(object: { [k: string]: any }): blend.services.user_creation.proto.Error;
+
+                    /**
+                     * Creates a plain object from an Error message. Also converts values to other types if specified.
+                     * @param message Error
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: blend.services.user_creation.proto.Error, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this Error to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for Error
                      * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
                      * @returns The default type url
                      */

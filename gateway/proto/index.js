@@ -57,6 +57,7 @@ export const blend = $root.blend = (() => {
                  * @property {number} STATUS_CODE_TXN_NOT_FOUND=7 STATUS_CODE_TXN_NOT_FOUND value
                  * @property {number} STATUS_CODE_INVALID_OTP=8 STATUS_CODE_INVALID_OTP value
                  * @property {number} STATUS_CODE_OTP_MISSING=9 STATUS_CODE_OTP_MISSING value
+                 * @property {number} STATUS_CODE_USER_ALREADY_EXISTS=10 STATUS_CODE_USER_ALREADY_EXISTS value
                  */
                 proto.StatusCode = (function() {
                     const valuesById = {}, values = Object.create(valuesById);
@@ -70,6 +71,7 @@ export const blend = $root.blend = (() => {
                     values[valuesById[7] = "STATUS_CODE_TXN_NOT_FOUND"] = 7;
                     values[valuesById[8] = "STATUS_CODE_INVALID_OTP"] = 8;
                     values[valuesById[9] = "STATUS_CODE_OTP_MISSING"] = 9;
+                    values[valuesById[10] = "STATUS_CODE_USER_ALREADY_EXISTS"] = 10;
                     return values;
                 })();
 
@@ -309,6 +311,7 @@ export const blend = $root.blend = (() => {
                      * @property {boolean|null} [ok] Response ok
                      * @property {blend.services.user_creation.proto.StatusCode|null} [code] Response code
                      * @property {blend.services.user_creation.proto.IAction1Response|null} [action_1] Response action_1
+                     * @property {Array.<blend.services.user_creation.proto.IError>|null} [errors] Response errors
                      */
 
                     /**
@@ -320,6 +323,7 @@ export const blend = $root.blend = (() => {
                      * @param {blend.services.user_creation.proto.IResponse=} [properties] Properties to set
                      */
                     function Response(properties) {
+                        this.errors = [];
                         if (properties)
                             for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -349,6 +353,14 @@ export const blend = $root.blend = (() => {
                      * @instance
                      */
                     Response.prototype.action_1 = null;
+
+                    /**
+                     * Response errors.
+                     * @member {Array.<blend.services.user_creation.proto.IError>} errors
+                     * @memberof blend.services.user_creation.proto.Response
+                     * @instance
+                     */
+                    Response.prototype.errors = $util.emptyArray;
 
                     // OneOf field names bound to virtual getters and setters
                     let $oneOfFields;
@@ -394,6 +406,9 @@ export const blend = $root.blend = (() => {
                             writer.uint32(/* id 2, wireType 0 =*/16).int32(message.code);
                         if (message.action_1 != null && Object.hasOwnProperty.call(message, "action_1"))
                             $root.blend.services.user_creation.proto.Action1Response.encode(message.action_1, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                        if (message.errors != null && message.errors.length)
+                            for (let i = 0; i < message.errors.length; ++i)
+                                $root.blend.services.user_creation.proto.Error.encode(message.errors[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
                         return writer;
                     };
 
@@ -438,6 +453,12 @@ export const blend = $root.blend = (() => {
                                 }
                             case 3: {
                                     message.action_1 = $root.blend.services.user_creation.proto.Action1Response.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 4: {
+                                    if (!(message.errors && message.errors.length))
+                                        message.errors = [];
+                                    message.errors.push($root.blend.services.user_creation.proto.Error.decode(reader, reader.uint32()));
                                     break;
                                 }
                             default:
@@ -493,6 +514,7 @@ export const blend = $root.blend = (() => {
                             case 7:
                             case 8:
                             case 9:
+                            case 10:
                                 break;
                             }
                         if (message.action_1 != null && message.hasOwnProperty("action_1")) {
@@ -501,6 +523,15 @@ export const blend = $root.blend = (() => {
                                 let error = $root.blend.services.user_creation.proto.Action1Response.verify(message.action_1);
                                 if (error)
                                     return "action_1." + error;
+                            }
+                        }
+                        if (message.errors != null && message.hasOwnProperty("errors")) {
+                            if (!Array.isArray(message.errors))
+                                return "errors: array expected";
+                            for (let i = 0; i < message.errors.length; ++i) {
+                                let error = $root.blend.services.user_creation.proto.Error.verify(message.errors[i]);
+                                if (error)
+                                    return "errors." + error;
                             }
                         }
                         return null;
@@ -567,11 +598,25 @@ export const blend = $root.blend = (() => {
                         case 9:
                             message.code = 9;
                             break;
+                        case "STATUS_CODE_USER_ALREADY_EXISTS":
+                        case 10:
+                            message.code = 10;
+                            break;
                         }
                         if (object.action_1 != null) {
                             if (typeof object.action_1 !== "object")
                                 throw TypeError(".blend.services.user_creation.proto.Response.action_1: object expected");
                             message.action_1 = $root.blend.services.user_creation.proto.Action1Response.fromObject(object.action_1);
+                        }
+                        if (object.errors) {
+                            if (!Array.isArray(object.errors))
+                                throw TypeError(".blend.services.user_creation.proto.Response.errors: array expected");
+                            message.errors = [];
+                            for (let i = 0; i < object.errors.length; ++i) {
+                                if (typeof object.errors[i] !== "object")
+                                    throw TypeError(".blend.services.user_creation.proto.Response.errors: object expected");
+                                message.errors[i] = $root.blend.services.user_creation.proto.Error.fromObject(object.errors[i]);
+                            }
                         }
                         return message;
                     };
@@ -589,6 +634,8 @@ export const blend = $root.blend = (() => {
                         if (!options)
                             options = {};
                         let object = {};
+                        if (options.arrays || options.defaults)
+                            object.errors = [];
                         if (options.defaults) {
                             object.ok = false;
                             object.code = options.enums === String ? "STATUS_CODE_OK" : 0;
@@ -601,6 +648,11 @@ export const blend = $root.blend = (() => {
                             object.action_1 = $root.blend.services.user_creation.proto.Action1Response.toObject(message.action_1, options);
                             if (options.oneofs)
                                 object.data = "action_1";
+                        }
+                        if (message.errors && message.errors.length) {
+                            object.errors = [];
+                            for (let j = 0; j < message.errors.length; ++j)
+                                object.errors[j] = $root.blend.services.user_creation.proto.Error.toObject(message.errors[j], options);
                         }
                         return object;
                     };
@@ -859,6 +911,483 @@ export const blend = $root.blend = (() => {
                     };
 
                     return Action1Response;
+                })();
+
+                proto.UserAlreadyExistsError = (function() {
+
+                    /**
+                     * Properties of a UserAlreadyExistsError.
+                     * @memberof blend.services.user_creation.proto
+                     * @interface IUserAlreadyExistsError
+                     * @property {boolean|null} [uid] UserAlreadyExistsError uid
+                     * @property {boolean|null} [phone] UserAlreadyExistsError phone
+                     * @property {boolean|null} [email] UserAlreadyExistsError email
+                     */
+
+                    /**
+                     * Constructs a new UserAlreadyExistsError.
+                     * @memberof blend.services.user_creation.proto
+                     * @classdesc Represents a UserAlreadyExistsError.
+                     * @implements IUserAlreadyExistsError
+                     * @constructor
+                     * @param {blend.services.user_creation.proto.IUserAlreadyExistsError=} [properties] Properties to set
+                     */
+                    function UserAlreadyExistsError(properties) {
+                        if (properties)
+                            for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * UserAlreadyExistsError uid.
+                     * @member {boolean} uid
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @instance
+                     */
+                    UserAlreadyExistsError.prototype.uid = false;
+
+                    /**
+                     * UserAlreadyExistsError phone.
+                     * @member {boolean} phone
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @instance
+                     */
+                    UserAlreadyExistsError.prototype.phone = false;
+
+                    /**
+                     * UserAlreadyExistsError email.
+                     * @member {boolean} email
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @instance
+                     */
+                    UserAlreadyExistsError.prototype.email = false;
+
+                    /**
+                     * Creates a new UserAlreadyExistsError instance using the specified properties.
+                     * @function create
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @static
+                     * @param {blend.services.user_creation.proto.IUserAlreadyExistsError=} [properties] Properties to set
+                     * @returns {blend.services.user_creation.proto.UserAlreadyExistsError} UserAlreadyExistsError instance
+                     */
+                    UserAlreadyExistsError.create = function create(properties) {
+                        return new UserAlreadyExistsError(properties);
+                    };
+
+                    /**
+                     * Encodes the specified UserAlreadyExistsError message. Does not implicitly {@link blend.services.user_creation.proto.UserAlreadyExistsError.verify|verify} messages.
+                     * @function encode
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @static
+                     * @param {blend.services.user_creation.proto.IUserAlreadyExistsError} message UserAlreadyExistsError message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    UserAlreadyExistsError.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                            writer.uint32(/* id 1, wireType 0 =*/8).bool(message.uid);
+                        if (message.phone != null && Object.hasOwnProperty.call(message, "phone"))
+                            writer.uint32(/* id 2, wireType 0 =*/16).bool(message.phone);
+                        if (message.email != null && Object.hasOwnProperty.call(message, "email"))
+                            writer.uint32(/* id 3, wireType 0 =*/24).bool(message.email);
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified UserAlreadyExistsError message, length delimited. Does not implicitly {@link blend.services.user_creation.proto.UserAlreadyExistsError.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @static
+                     * @param {blend.services.user_creation.proto.IUserAlreadyExistsError} message UserAlreadyExistsError message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    UserAlreadyExistsError.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes a UserAlreadyExistsError message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {blend.services.user_creation.proto.UserAlreadyExistsError} UserAlreadyExistsError
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    UserAlreadyExistsError.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        let end = length === undefined ? reader.len : reader.pos + length, message = new $root.blend.services.user_creation.proto.UserAlreadyExistsError();
+                        while (reader.pos < end) {
+                            let tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1: {
+                                    message.uid = reader.bool();
+                                    break;
+                                }
+                            case 2: {
+                                    message.phone = reader.bool();
+                                    break;
+                                }
+                            case 3: {
+                                    message.email = reader.bool();
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes a UserAlreadyExistsError message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {blend.services.user_creation.proto.UserAlreadyExistsError} UserAlreadyExistsError
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    UserAlreadyExistsError.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies a UserAlreadyExistsError message.
+                     * @function verify
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    UserAlreadyExistsError.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.uid != null && message.hasOwnProperty("uid"))
+                            if (typeof message.uid !== "boolean")
+                                return "uid: boolean expected";
+                        if (message.phone != null && message.hasOwnProperty("phone"))
+                            if (typeof message.phone !== "boolean")
+                                return "phone: boolean expected";
+                        if (message.email != null && message.hasOwnProperty("email"))
+                            if (typeof message.email !== "boolean")
+                                return "email: boolean expected";
+                        return null;
+                    };
+
+                    /**
+                     * Creates a UserAlreadyExistsError message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {blend.services.user_creation.proto.UserAlreadyExistsError} UserAlreadyExistsError
+                     */
+                    UserAlreadyExistsError.fromObject = function fromObject(object) {
+                        if (object instanceof $root.blend.services.user_creation.proto.UserAlreadyExistsError)
+                            return object;
+                        let message = new $root.blend.services.user_creation.proto.UserAlreadyExistsError();
+                        if (object.uid != null)
+                            message.uid = Boolean(object.uid);
+                        if (object.phone != null)
+                            message.phone = Boolean(object.phone);
+                        if (object.email != null)
+                            message.email = Boolean(object.email);
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from a UserAlreadyExistsError message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @static
+                     * @param {blend.services.user_creation.proto.UserAlreadyExistsError} message UserAlreadyExistsError
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    UserAlreadyExistsError.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        let object = {};
+                        if (options.defaults) {
+                            object.uid = false;
+                            object.phone = false;
+                            object.email = false;
+                        }
+                        if (message.uid != null && message.hasOwnProperty("uid"))
+                            object.uid = message.uid;
+                        if (message.phone != null && message.hasOwnProperty("phone"))
+                            object.phone = message.phone;
+                        if (message.email != null && message.hasOwnProperty("email"))
+                            object.email = message.email;
+                        return object;
+                    };
+
+                    /**
+                     * Converts this UserAlreadyExistsError to JSON.
+                     * @function toJSON
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    UserAlreadyExistsError.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    /**
+                     * Gets the default type url for UserAlreadyExistsError
+                     * @function getTypeUrl
+                     * @memberof blend.services.user_creation.proto.UserAlreadyExistsError
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    UserAlreadyExistsError.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/blend.services.user_creation.proto.UserAlreadyExistsError";
+                    };
+
+                    return UserAlreadyExistsError;
+                })();
+
+                proto.Error = (function() {
+
+                    /**
+                     * Properties of an Error.
+                     * @memberof blend.services.user_creation.proto
+                     * @interface IError
+                     * @property {blend.services.user_creation.proto.IUserAlreadyExistsError|null} [userAlreayExists] Error userAlreayExists
+                     */
+
+                    /**
+                     * Constructs a new Error.
+                     * @memberof blend.services.user_creation.proto
+                     * @classdesc Represents an Error.
+                     * @implements IError
+                     * @constructor
+                     * @param {blend.services.user_creation.proto.IError=} [properties] Properties to set
+                     */
+                    function Error(properties) {
+                        if (properties)
+                            for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+
+                    /**
+                     * Error userAlreayExists.
+                     * @member {blend.services.user_creation.proto.IUserAlreadyExistsError|null|undefined} userAlreayExists
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @instance
+                     */
+                    Error.prototype.userAlreayExists = null;
+
+                    // OneOf field names bound to virtual getters and setters
+                    let $oneOfFields;
+
+                    /**
+                     * Error value.
+                     * @member {"userAlreayExists"|undefined} value
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @instance
+                     */
+                    Object.defineProperty(Error.prototype, "value", {
+                        get: $util.oneOfGetter($oneOfFields = ["userAlreayExists"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+
+                    /**
+                     * Creates a new Error instance using the specified properties.
+                     * @function create
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @static
+                     * @param {blend.services.user_creation.proto.IError=} [properties] Properties to set
+                     * @returns {blend.services.user_creation.proto.Error} Error instance
+                     */
+                    Error.create = function create(properties) {
+                        return new Error(properties);
+                    };
+
+                    /**
+                     * Encodes the specified Error message. Does not implicitly {@link blend.services.user_creation.proto.Error.verify|verify} messages.
+                     * @function encode
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @static
+                     * @param {blend.services.user_creation.proto.IError} message Error message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Error.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.userAlreayExists != null && Object.hasOwnProperty.call(message, "userAlreayExists"))
+                            $root.blend.services.user_creation.proto.UserAlreadyExistsError.encode(message.userAlreayExists, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                        return writer;
+                    };
+
+                    /**
+                     * Encodes the specified Error message, length delimited. Does not implicitly {@link blend.services.user_creation.proto.Error.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @static
+                     * @param {blend.services.user_creation.proto.IError} message Error message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    Error.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+
+                    /**
+                     * Decodes an Error message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {blend.services.user_creation.proto.Error} Error
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Error.decode = function decode(reader, length) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        let end = length === undefined ? reader.len : reader.pos + length, message = new $root.blend.services.user_creation.proto.Error();
+                        while (reader.pos < end) {
+                            let tag = reader.uint32();
+                            switch (tag >>> 3) {
+                            case 1: {
+                                    message.userAlreayExists = $root.blend.services.user_creation.proto.UserAlreadyExistsError.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Decodes an Error message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {blend.services.user_creation.proto.Error} Error
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    Error.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+
+                    /**
+                     * Verifies an Error message.
+                     * @function verify
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    Error.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        let properties = {};
+                        if (message.userAlreayExists != null && message.hasOwnProperty("userAlreayExists")) {
+                            properties.value = 1;
+                            {
+                                let error = $root.blend.services.user_creation.proto.UserAlreadyExistsError.verify(message.userAlreayExists);
+                                if (error)
+                                    return "userAlreayExists." + error;
+                            }
+                        }
+                        return null;
+                    };
+
+                    /**
+                     * Creates an Error message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {blend.services.user_creation.proto.Error} Error
+                     */
+                    Error.fromObject = function fromObject(object) {
+                        if (object instanceof $root.blend.services.user_creation.proto.Error)
+                            return object;
+                        let message = new $root.blend.services.user_creation.proto.Error();
+                        if (object.userAlreayExists != null) {
+                            if (typeof object.userAlreayExists !== "object")
+                                throw TypeError(".blend.services.user_creation.proto.Error.userAlreayExists: object expected");
+                            message.userAlreayExists = $root.blend.services.user_creation.proto.UserAlreadyExistsError.fromObject(object.userAlreayExists);
+                        }
+                        return message;
+                    };
+
+                    /**
+                     * Creates a plain object from an Error message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @static
+                     * @param {blend.services.user_creation.proto.Error} message Error
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    Error.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        let object = {};
+                        if (message.userAlreayExists != null && message.hasOwnProperty("userAlreayExists")) {
+                            object.userAlreayExists = $root.blend.services.user_creation.proto.UserAlreadyExistsError.toObject(message.userAlreayExists, options);
+                            if (options.oneofs)
+                                object.value = "userAlreayExists";
+                        }
+                        return object;
+                    };
+
+                    /**
+                     * Converts this Error to JSON.
+                     * @function toJSON
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    Error.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+
+                    /**
+                     * Gets the default type url for Error
+                     * @function getTypeUrl
+                     * @memberof blend.services.user_creation.proto.Error
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    Error.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/blend.services.user_creation.proto.Error";
+                    };
+
+                    return Error;
                 })();
 
                 /**
