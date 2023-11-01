@@ -3,6 +3,7 @@ package blend.services.user_mgmt.proto;
 
 option go_package="blendwith.me/services/user_mgmt/pb";
 
+import "services/user_mgmt/proto/error.proto";
 
 enum ResponseCode {
     OK = 0;
@@ -20,6 +21,7 @@ message Response {
         FetchIdResponse fetch_id = 3;
         CreateUserResponse create_user = 4;
     };
+    repeated Error errors = 5;
 }
 
 message FetchIdResponse {

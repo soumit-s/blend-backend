@@ -6,11 +6,10 @@ import (
 )
 
 var (
-	ResponseInvalidQuery      []byte
-	ResponseInvalidFieldName  []byte
-	ResponseInternalError     []byte
-	ResponseInvalidSchema     []byte
-	ResponseUserAlreadyExists []byte
+	ResponseInvalidQuery     []byte
+	ResponseInvalidFieldName []byte
+	ResponseInternalError    []byte
+	ResponseInvalidSchema    []byte
 )
 
 func init() {
@@ -18,7 +17,6 @@ func init() {
 	ResponseInvalidFieldName = ErrorResponse(pb.ResponseCode_INVALID_FIELD_NAME)
 	ResponseInternalError = ErrorResponse(pb.ResponseCode_INTERNAL_ERROR)
 	ResponseInvalidSchema = ErrorResponse(pb.ResponseCode_INVALID_SCHEMA)
-	ResponseUserAlreadyExists = ErrorResponse(pb.ResponseCode_USER_ALREADY_EXISTS)
 }
 
 func ErrorResponse(code pb.ResponseCode) []byte {
@@ -26,5 +24,29 @@ func ErrorResponse(code pb.ResponseCode) []byte {
 		Ok:   false,
 		Code: code,
 	})
+	return raw
+}
+
+func NewResponseUserAlreadyExists(uid bool, phone bool, email bool) *pb.Response {
+	return &pb.Response{
+		Ok:   false,
+		Code: pb.ResponseCode_USER_ALREADY_EXISTS,
+		Errors: []*pb.Error{
+			{
+				Value: &pb.Error_UserAlreadyExistsError{
+					UserAlreadyExistsError: &pb.UserAlreadyExistsError{
+						UIDAlreadyTaken:         uid,
+						PhoneNumberAlreadyTaken: phone,
+						EmailAlreadyTaken:       email,
+					},
+				},
+			},
+		},
+	}
+}
+
+func ResponseUserAlreadyExists(uid bool, phone bool, email bool) []byte {
+	res := NewResponseUserAlreadyExists(uid, phone, email)
+	raw, _ := proto.Marshal(res)
 	return raw
 }

@@ -1,0 +1,16 @@
+syntax="proto3";
+package blend.services.user_mgmt.proto;
+
+option go_package="blendwith.me/services/user_mgmt/pb";
+
+message Error {
+    oneof value {
+        UserAlreadyExistsError userAlreadyExistsError = 1;
+    };
+}
+
+message UserAlreadyExistsError {
+    bool UIDAlreadyTaken = 1;
+    bool PhoneNumberAlreadyTaken = 2;
+    bool EmailAlreadyTaken = 3;
+}

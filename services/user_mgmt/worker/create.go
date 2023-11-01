@@ -53,7 +53,7 @@ func (w *CreateWorker) workerCreateUser(msg *nats.Msg) {
 
 	if err := db.CreateUser(&m); err != nil {
 		if errors.Is(err, db.ErrUserAlreadyExists) {
-			msg.Respond(service.ResponseUserAlreadyExists)
+			msg.Respond(service.ResponseUserAlreadyExists(true, true, true))
 		} else {
 			msg.Respond(service.ResponseInternalError)
 		}
