@@ -18,6 +18,14 @@ class A:
         self._user_creation_process = subprocess.Popen(
             wrap_command_for_diff_shell("cd services/user_creation && air"), shell=True
         )
+    
+    def start_user_mgmt_service(self):
+        """Starts the user management service"""
+        print("spinning up the user managemenet service ...")
+        self._user_mgmt_process = subprocess.Popen(
+            wrap_command_for_diff_shell("cd services/user_mgmt && air"),
+            shell=True
+        )
 
     def start_gateway(self):
         """Starts the gateway"""
@@ -28,6 +36,7 @@ class A:
         )
 
     def start(self):
+        self.start_user_mgmt_service()
         self.start_user_creation_service()
         self.start_gateway()
 
@@ -41,7 +50,11 @@ class A:
             print(f"waiting for 'use-creation-service' to finish ...")
             rcode = self._user_creation_process.wait()
             print(f"'user-creation-service' exited with code: {rcode}")
-        pass
+        
+        if self._user_mgmt_process.poll() is None:
+            print(f"waiting for the user-mgmt service to finish ...")
+            rcode = self._user_mgmt_process.wait()
+            print(f"user-mgmt service exited with code: {rcode}")
 
 
 def main():
