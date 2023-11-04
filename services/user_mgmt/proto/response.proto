@@ -12,6 +12,7 @@ enum ResponseCode {
     INTERNAL_ERROR = 3;
     INVALID_SCHEMA = 4;
     USER_ALREADY_EXISTS = 5;
+    USER_NOT_FOUND = 6;
 }
 
 message Response {

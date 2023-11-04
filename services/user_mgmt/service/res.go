@@ -10,6 +10,7 @@ var (
 	ResponseInvalidFieldName []byte
 	ResponseInternalError    []byte
 	ResponseInvalidSchema    []byte
+	ResponseUserNotFound     []byte
 )
 
 func init() {
@@ -17,6 +18,7 @@ func init() {
 	ResponseInvalidFieldName = ErrorResponse(pb.ResponseCode_INVALID_FIELD_NAME)
 	ResponseInternalError = ErrorResponse(pb.ResponseCode_INTERNAL_ERROR)
 	ResponseInvalidSchema = ErrorResponse(pb.ResponseCode_INVALID_SCHEMA)
+	ResponseUserNotFound = ErrorResponse(pb.ResponseCode_USER_NOT_FOUND)
 }
 
 func ErrorResponse(code pb.ResponseCode) []byte {

@@ -2,14 +2,18 @@ package service
 
 import (
 	"errors"
+	"strings"
 	"sync"
 
+	"blendwith.me/services/user_mgmt/config"
 	"blendwith.me/services/user_mgmt/db"
 	"github.com/nats-io/nats.go"
 )
 
 type Service struct {
 	Logger
+	Config *config.Config
+
 	NatsConn *nats.Conn
 	workers  []Worker
 
@@ -18,9 +22,10 @@ type Service struct {
 	running chan error
 }
 
-func NewService(workers []Worker) (*Service, error) {
+func NewService(cfg *config.Config, workers []Worker) (*Service, error) {
 	s := &Service{
 		Logger:  Logger{Prefix: "[ user-mgmt ]"},
+		Config:  cfg,
 		workers: workers,
 		mut:     &sync.Mutex{},
 	}
@@ -59,11 +64,11 @@ func (s *Service) init() error {
 }
 
 func (s *Service) initDb() error {
-	return db.Connect()
+	return db.Connect(s.Config)
 }
 
 func (s *Service) initNats() error {
-	conn, err := nats.Connect(nats.DefaultURL)
+	conn, err := nats.Connect(s.getNatsURL())
 	if err != nil {
 		s.LogERR("failed to connect to NATS")
 		return err
@@ -71,6 +76,14 @@ func (s *Service) initNats() error {
 	s.LogOK("successfully connected to NATS")
 	s.NatsConn = conn
 	return nil
+}
+
+func (s *Service) getNatsURL() string {
+	url := ""
+	for _, server := range s.Config.Nats.Servers {
+		url += server + ", "
+	}
+	return strings.TrimSuffix(url, ",")
 }
 
 func (s *Service) registerWorkers() error {

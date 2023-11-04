@@ -5,6 +5,7 @@ import "errors"
 var (
 	ErrInvalidFieldName  = errors.New("invalid field name")
 	ErrUserAlreadyExists = errors.New("user with following uid, email or phone number already exists")
+	ErrUserDoesNotExist  = errors.New("user does not exist")
 	ErrInternal          = errors.New("internal error")
 )
 

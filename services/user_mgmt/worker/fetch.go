@@ -1,6 +1,7 @@
 package worker
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -54,7 +55,13 @@ func (w *FetchWorker) workerFetchId(msg *nats.Msg) {
 	id, err := db.FetchIdByField(field, value)
 	if err != nil {
 		w.LogERR("%v", err)
-		msg.Respond(service.ResponseInvalidFieldName)
+		if errors.Is(err, db.ErrInvalidFieldName) {
+			msg.Respond(service.ResponseInvalidFieldName)
+		} else if errors.Is(err, db.ErrUserDoesNotExist) {
+			msg.Respond(service.ResponseUserNotFound)
+		} else {
+			msg.Respond(service.ResponseInternalError)
+		}
 		return
 	}
 

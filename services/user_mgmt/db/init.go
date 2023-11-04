@@ -1,6 +1,7 @@
 package db
 
 import (
+	"blendwith.me/services/user_mgmt/config"
 	"blendwith.me/services/user_mgmt/db/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,8 +17,8 @@ const (
 )
 
 // Connect establishes connection to the database.
-func Connect() error {
-	if blend, err := gorm.Open(postgres.Open(URI)); err != nil {
+func Connect(cfg *config.Config) error {
+	if blend, err := gorm.Open(postgres.Open(cfg.Db.Blend.URI)); err != nil {
 		return err
 	} else {
 		Blend = blend

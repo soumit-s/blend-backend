@@ -6,12 +6,24 @@ import (
 	"sync"
 	"syscall"
 
+	"blendwith.me/services/user_mgmt/config"
 	"blendwith.me/services/user_mgmt/service"
 	"blendwith.me/services/user_mgmt/worker"
 )
 
 func main() {
-	s, err := service.NewService([]service.Worker{
+	// Create the service logger.
+	logger := service.NewLogger("[ user-mgmt ]")
+
+	// Load the configuration.
+	cfg, err := config.Load("config.json")
+	if err != nil {
+		logger.LogERR("failed to load configuration file ...")
+		logger.LogERR("%v", err)
+		return
+	}
+
+	s, err := service.NewService(cfg, []service.Worker{
 		worker.NewFetchWorker(),
 		worker.NewCreateWorker(),
 	})

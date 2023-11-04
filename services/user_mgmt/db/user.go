@@ -8,17 +8,25 @@ import (
 )
 
 // FetchIdByUid fetches the ID of the user using their UID.
-func FetchIdByUid(uid string) (uint64, error) {
+func FetchIdByUid(uid string) (id uint64, err error) {
 	m := model.User{}
-	err := Blend.Table(TableUsers).Where("uid = ?", uid).Select("id").First(&m).Error
-	return uint64(m.ID), err
+	err = Blend.Table(TableUsers).Where("uid = ?", uid).Select("id").First(&m).Error
+	id = uint64(m.ID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = ErrUserDoesNotExist
+	}
+	return id, err
 }
 
 // FetchIdByPhone fetches the ID of the user registered with the phone number.
-func FetchIdByPhone(phone string) (uint64, error) {
+func FetchIdByPhone(phone string) (id uint64, err error) {
 	m := model.User{}
-	err := Blend.Table(TableUsers).Where("phone_number = ?", phone).Select("id").Error
-	return uint64(m.ID), err
+	err = Blend.Table(TableUsers).Where("phone_number = ?", phone).Select("id").Error
+	id = uint64(m.ID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = ErrUserDoesNotExist
+	}
+	return id, err
 }
 
 func FetchIdByField(field string, value string) (uint64, error) {
